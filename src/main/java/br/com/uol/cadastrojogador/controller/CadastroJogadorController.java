@@ -7,6 +7,8 @@ import java.util.Random;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import br.com.uol.cadastrojogador.helpers.JogadorHelper;
 import br.com.uol.cadastrojogador.model.Grupo;
 import br.com.uol.cadastrojogador.model.Jogador;
+import br.com.uol.cadastrojogador.model.ResponseOk;
 import br.com.uol.cadastrojogador.service.JogadorService;
 
 @Controller
@@ -30,19 +33,17 @@ public class CadastroJogadorController {
 	private JogadorHelper jogadorHelp;
 	
 	@RequestMapping("/")
-	public String listar() {
-		return "index";
+	public ResponseEntity<ResponseOk> listar() {
+		return new ResponseEntity<ResponseOk>(new ResponseOk("It's Working!", 200), HttpStatus.OK);
 	}
 	
-	@GetMapping("/lista")
-	public @ResponseBody  ModelAndView lista() {
-	        ModelAndView mv = new ModelAndView("/lista");
-	        mv.addObject("jogadores", jogadorService.getAll());
-	        return mv;
+	@RequestMapping(value = "/lista" , method = RequestMethod.GET)
+	public @ResponseBody  ResponseEntity<List<Jogador>> lista() {
+	   return new ResponseEntity<List<Jogador>>(jogadorService.getAll(), HttpStatus.OK);
 	}
 	
 	
-	@GetMapping("/cadastro")
+	@RequestMapping(value = "/cadastro" , method = RequestMethod.GET)
 	public ModelAndView cadastro(Jogador jogador) throws IOException{
 		List<String> liga = jogadorHelp.requestLiga();
 		List<String> vingadores = jogadorHelp.requestVingadores();
@@ -55,20 +56,20 @@ public class CadastroJogadorController {
 	
 	
 	@RequestMapping(value = "/salvar", method = RequestMethod.POST)
-	public ModelAndView  salvar(@Valid Jogador jogador, BindingResult result) throws IOException {
+	public ResponseEntity<List<Jogador>>  salvar(@Valid Jogador jogador, BindingResult result) throws IOException {
 		if(result.hasErrors()) {
-            return cadastro(jogador);
+            //return cadastro(jogador);
         }
 		Random ran = new Random(); 
 		if(jogador.getGrupo().getCodNome().isEmpty()) {
-			jogador.setGrupo(new Grupo("?"+ ran.toString(), null));
+			//jogador.setGrupo(new Grupo("?"+ ran.toString(), null));
 		}
 		jogadorService.add(jogador);
 		return lista();
 	}
 	
 	@GetMapping("/delete/{id}")
-	public ModelAndView delete(@PathVariable Long id) {
+	public ResponseEntity<List<Jogador>> delete(@PathVariable Long id) {
 		jogadorService.delete(id);
 		return lista();
 	}

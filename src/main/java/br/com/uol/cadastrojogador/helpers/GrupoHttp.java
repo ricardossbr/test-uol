@@ -1,36 +1,27 @@
 package br.com.uol.cadastrojogador.helpers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class GrupoHttp {
-	private List<String> codNomeVingadores;
-	private List<String> codNomesLiga;
+	final private List<String> codNomeVingadores = new ArrayList<String>();
+	final private List<String> codNomesLiga = new ArrayList<String>();
 	
 	public GrupoHttp() {
-		
 	}
-	
-	public GrupoHttp(List<String> codNomeVingadores, List<String> codNomesLiga) {
-		this.codNomeVingadores = codNomeVingadores;
-		this.codNomesLiga = codNomesLiga;
-	}
-	
 	
 	public List<String> getCodNomeVingadores() {
-		return codNomeVingadores;
+		return Collections.unmodifiableList(codNomeVingadores);
 	}
-	public void setCodNomeVingadores(List<String> codNomeVingadores) {
-		this.codNomeVingadores = codNomeVingadores;
-	}
+	
 	public List<String> getCodNomesLiga() {
-		return codNomesLiga;
+		return Collections.unmodifiableList(codNomesLiga);
 	}
-	public void setCodNomesLiga(List<String> codNomesLiga) {
-		this.codNomesLiga = codNomesLiga;
-	}
+	
 	public void addVingadores(String to) {
 		this.codNomeVingadores.add(to);
 	}

@@ -15,11 +15,6 @@ public class Grupo {
 		
 	}
 
-	public Grupo(String codNome, String nomeGrupo) {
-		this.codNome = codNome;
-		this.nomeGrupo = nomeGrupo;
-		
-	}
 	public String getCodNome() {
 		return codNome;
 	}

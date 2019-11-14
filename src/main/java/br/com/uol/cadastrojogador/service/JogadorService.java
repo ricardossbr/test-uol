@@ -13,7 +13,6 @@ import br.com.uol.cadastrojogador.model.Jogador;
 @Transactional
 public class JogadorService {
 	
-	
 	@Autowired
 	private JogadorRepository jogadorRepository;
 	
@@ -35,5 +34,4 @@ public class JogadorService {
 		jogadorRepository.delete(id);
 	}
 	
-
 }
