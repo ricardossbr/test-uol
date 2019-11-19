@@ -28,10 +28,10 @@ public class Jogador {
 	@ManyToOne(cascade=CascadeType.ALL)
 	private Grupo grupo;
 	
-	
 	public Jogador() {
 		
 	}
+	
 	public Jogador(String nome, String email, String telefone, Grupo grupo) {
 		super();
 		this.nome = nome;

@@ -1,11 +1,11 @@
 package br.com.uol.cadastrojogador.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-
+import java.util.Map;
 import javax.validation.Valid;
-
+import org.jdom2.JDOMException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,42 +16,36 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
-import br.com.uol.cadastrojogador.helpers.JogadorHelper;
-import br.com.uol.cadastrojogador.model.Grupo;
+import br.com.uol.cadastrojogador.dao.JogadorDao;
 import br.com.uol.cadastrojogador.model.Jogador;
-import br.com.uol.cadastrojogador.model.ResponseOk;
+import br.com.uol.cadastrojogador.model.ResponseHttp;
 import br.com.uol.cadastrojogador.service.JogadorService;
 
 @Controller
 public class CadastroJogadorController {
 	
 	@Autowired
-	private JogadorService jogadorService;
+	private JogadorDao jogadorDao;
 	@Autowired
-	private JogadorHelper jogadorHelp;
+	private JogadorService jogadorService;
 	
 	@RequestMapping("/")
-	public ResponseEntity<ResponseOk> listar() {
-		return new ResponseEntity<ResponseOk>(new ResponseOk("It's Working!", 200), HttpStatus.OK);
+	public ResponseEntity<ResponseHttp> listar() {
+		return new ResponseEntity<ResponseHttp>(new ResponseHttp("It's Working!", 200), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/lista" , method = RequestMethod.GET)
 	public @ResponseBody  ResponseEntity<List<Jogador>> lista() {
-	   return new ResponseEntity<List<Jogador>>(jogadorService.getAll(), HttpStatus.OK);
+	   return new ResponseEntity<List<Jogador>>(jogadorDao.getAll(), HttpStatus.OK);
 	}
 	
 	
-	@RequestMapping(value = "/cadastro" , method = RequestMethod.GET)
-	public ModelAndView cadastro(Jogador jogador) throws IOException{
-		List<String> liga = jogadorHelp.requestLiga();
-		List<String> vingadores = jogadorHelp.requestVingadores();
-		ModelAndView mv = new ModelAndView("/cadastro");
-		mv.addObject("jogadores", jogador);
-		mv.addObject("liga", liga);
-		mv.addObject("vingadores", vingadores);
-		return mv;
+	@RequestMapping(value = "/list-heroes" , method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getListHeroes() throws IOException, JDOMException{
+		final Map<String, Object> zip = new HashMap<String, Object>();
+		zip.put("liga", jogadorService.requestLiga());
+		zip.put("vingadores", jogadorService.requestVingadores());
+		return new ResponseEntity<Map<String, Object>>(zip, HttpStatus.OK);
 	}
 	
 	
@@ -60,30 +54,25 @@ public class CadastroJogadorController {
 		if(result.hasErrors()) {
             //return cadastro(jogador);
         }
-		Random ran = new Random(); 
 		if(jogador.getGrupo().getCodNome().isEmpty()) {
 			//jogador.setGrupo(new Grupo("?"+ ran.toString(), null));
 		}
-		jogadorService.add(jogador);
+		jogadorDao.add(jogador);
 		return lista();
 	}
 	
 	@GetMapping("/delete/{id}")
 	public ResponseEntity<List<Jogador>> delete(@PathVariable Long id) {
-		jogadorService.delete(id);
+		jogadorDao.delete(id);
 		return lista();
 	}
 	
 	@GetMapping("/edit/{id}")
-    public ModelAndView edit(@PathVariable("id") Long id) throws IOException {
-        return cadastro(jogadorService.findById(id));
+    public ResponseEntity<Map<String, Object>> edit(@PathVariable("id") Long id) throws IOException {
+        //return cadastro(jogadorDao.findById(id));
+		return null;
     }
 	
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
 	
 	
 }

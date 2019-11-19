@@ -1,14 +1,13 @@
-package br.com.uol.cadastrojogador.service;
+package br.com.uol.cadastrojogador.dao;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import br.com.uol.cadastrojogador.dao.GrupoRepository;
 
 @Service
 @Transactional
-public class GrupoService {
+public class GrupoDao {
 
 	@Autowired
 	private GrupoRepository grupoRepository;
