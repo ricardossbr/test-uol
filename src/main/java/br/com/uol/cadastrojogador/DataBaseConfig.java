@@ -20,7 +20,7 @@ public class DataBaseConfig {
 
 	@Bean
 	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
 		dataSource.setUrl("jdbc:hsqldb:mem:database");
 		dataSource.setUsername("sa");
@@ -30,9 +30,9 @@ public class DataBaseConfig {
 
 	@Bean
 	public EntityManagerFactory entityManagerFactory() {
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(true);
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+		final LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory.setJpaVendorAdapter(vendorAdapter);
 		factory.setPackagesToScan("br.com.uol.cadastrojogador.model");
 		factory.setDataSource(dataSource());
@@ -42,8 +42,7 @@ public class DataBaseConfig {
 	
 	@Bean
 	public PlatformTransactionManager transactionManager() {
-
-		JpaTransactionManager txManager = new JpaTransactionManager();
+		final JpaTransactionManager txManager = new JpaTransactionManager();
 		txManager.setEntityManagerFactory(entityManagerFactory());
 		return txManager;
 	}

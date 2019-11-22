@@ -40,7 +40,7 @@ public class CadastroJogadorController {
 	}
 	
 	
-	@RequestMapping(value = "/list-heroes" , method = RequestMethod.GET)
+	@RequestMapping(value = "/heroes" , method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> getListHeroes() throws IOException, JDOMException{
 		final Map<String, Object> zip = new HashMap<String, Object>();
 		zip.put("liga", jogadorService.requestLiga());
@@ -61,13 +61,13 @@ public class CadastroJogadorController {
 		return lista();
 	}
 	
-	@GetMapping("/delete/{id}")
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<List<Jogador>> delete(@PathVariable Long id) {
 		jogadorDao.delete(id);
 		return lista();
 	}
 	
-	@GetMapping("/edit/{id}")
+	@RequestMapping(value = "/edit/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Map<String, Object>> edit(@PathVariable("id") Long id) throws IOException {
         //return cadastro(jogadorDao.findById(id));
 		return null;

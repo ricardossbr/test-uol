@@ -15,5 +15,4 @@ public class GrupoDao {
 	public boolean buscaPorCodNome(String codNome){
 		return grupoRepository.findOne(codNome) == null;
 	}
-
 }
