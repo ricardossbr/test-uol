@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -24,20 +26,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import br.com.uol.cadastrojogador.dao.GrupoDao;
-
 @Component
+@AllArgsConstructor
 public class JogadorService {
 	
 	
-	@Autowired
-	private GrupoDao grupoDao;
+	@NonNull
+	private GrupService grupService;
 	
 	private final String USER_AGENT = "";
-	private final String urlJson = "https://raw.githubusercontssssent.com/uolhost/test-backEnd-Java/master/referencias/vingadores.json";
-	private final String urlXml = "https://raw.githubusercontent.com/uolhost/test-backEnd-Java/master/referencias/liga_da_justica.xml";
-
-	public JogadorService() {}
+	private final String urlJson = "";
+	private final String urlXml = "";
 
 	public List<Map<String, String>> requestVingadores() throws IOException {
 		final StringBuilder to = enviaRequest(urlJson);
@@ -47,7 +46,7 @@ public class JogadorService {
 		for (JsonElement element : results) {
 			final String hero = element.getAsJsonObject().get("codinome").getAsString();
 			final Map<String, String> superHero = new HashMap<String, String>();
-			if(grupoDao.buscaPorCodNome(hero)) {
+			if(grupService.buscaPorCodNome(hero)) {
 				superHero.put("codName", hero);
 			}
 			vingadores.add(superHero);
@@ -63,7 +62,7 @@ public class JogadorService {
 			final Document doc = saxBuilder.build(new StringReader(response.toString()));
 			for(Element element : doc.getRootElement().getChild("codinomes").getChildren()) {
 				final Map<String, String> superHero = new HashMap<String, String>();
-				if(grupoDao.buscaPorCodNome(element.getValue())){
+				if(grupService.buscaPorCodNome(element.getValue())){
 					superHero.put("codName", element.getValue());
 				}
 				liga.add(superHero);
@@ -90,9 +89,6 @@ public class JogadorService {
 			}
 			return result;
 		}catch (IOException e) {
-			// TODO: handle exception
-			
-			System.err.println("AQUUUUUUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
 			System.err.println(e.getMessage());
 			return new StringBuilder();
 		}

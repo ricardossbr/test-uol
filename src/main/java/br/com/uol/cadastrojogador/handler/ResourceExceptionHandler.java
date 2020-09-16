@@ -1,0 +1,11 @@
+package br.com.uol.cadastrojogador.handler;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+
+@ControllerAdvice
+public class ResourceExceptionHandler {
+
+
+
+}
+

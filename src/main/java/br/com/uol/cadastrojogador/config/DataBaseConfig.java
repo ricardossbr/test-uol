@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador;
+package br.com.uol.cadastrojogador.config;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
