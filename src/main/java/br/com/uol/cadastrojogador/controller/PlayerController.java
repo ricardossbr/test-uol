@@ -1,80 +1,53 @@
 package br.com.uol.cadastrojogador.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.validation.Valid;
-
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import org.jdom2.JDOMException;
+import br.com.uol.cadastrojogador.dto.PlayerDto;
+import br.com.uol.cadastrojogador.enums.GroupNameEnum;
+import br.com.uol.cadastrojogador.service.PlayerService;
+import br.com.uol.cadastrojogador.service.ResourceHttpService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import br.com.uol.cadastrojogador.service.PlayerService;
-import br.com.uol.cadastrojogador.model.PlayerModel;
-import br.com.uol.cadastrojogador.service.JogadorService;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@AllArgsConstructor
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+@RestController
 public class PlayerController {
 
-	@NonNull
+	@Autowired
+	private ResourceHttpService resourceHttpService;
+
+	@Autowired
 	private PlayerService playerService;
-	@NonNull
-	private JogadorService jogadorService;
+
+	@GetMapping(value = "/groups")
+	public ResponseEntity<List<String>> availableGroups() throws IOException {
+		return ResponseEntity.status(HttpStatus.OK).body(Arrays.asList(GroupNameEnum.LIGADAJUSTICA.name(), GroupNameEnum.VINGADORES.name()));
+	}
 	
-	@RequestMapping("/")
-	public ResponseEntity listar() {
+	@GetMapping(value = "/player/{id}")
+	public @ResponseBody  ResponseEntity list(@PathVariable("id") Long id) {
+	   return this.playerService.getPlayer(id);
+	}
+	
+	@PostMapping(value = "/player")
+	public ResponseEntity  save(@RequestBody PlayerDto playerModel) throws IOException {
+		if(playerModel != null){
+			return playerService.save(playerModel);
+		}
+		return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	}
+	
+	@DeleteMapping(value = "/player/{id}")
+	public ResponseEntity delete(@PathVariable Long id) {
 		return ResponseEntity.ok(HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/jogador" , method = RequestMethod.GET)
-	public @ResponseBody  ResponseEntity lista() {
-	   return new ResponseEntity(playerService.getAll(), HttpStatus.OK);
-	}
-	
-	@RequestMapping(value = "/jogador", method = RequestMethod.POST)
-	public ResponseEntity<List<PlayerModel>>  salvar(@Valid PlayerModel playerModel, BindingResult result) throws IOException {
+	@PutMapping(value = "/player/{id}")
+    public ResponseEntity edit(@PathVariable("id") Long id) throws IOException {
+		return ResponseEntity.ok(HttpStatus.OK);
 
-		playerService.add(playerModel);
-		return lista();
-	}
-	
-	@RequestMapping(value = "/jogador/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity delete(@PathVariable String id) {
-		playerService.delete(id);
-		if(paramsIsOk(id)){
-			return ResponseEntity.ok(HttpStatus.OK);
-		}
-		return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
-	}
-	
-	@RequestMapping(value = "/jogador/{id}", method = RequestMethod.PUT)
-    public ResponseEntity edit(@PathVariable("id") String id) throws IOException {
-		if(paramsIsOk(id)){
-			return ResponseEntity.ok(HttpStatus.OK);
-		}
-		return ResponseEntity.ok(HttpStatus.BAD_REQUEST);
     }
-
-	@RequestMapping(value = "/heroes" , method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> getListHeroes() throws IOException, JDOMException{
-		final Map<String, Object> zip = new HashMap<String, Object>();
-		zip.put("liga", jogadorService.requestLiga());
-		zip.put("vingadores", jogadorService.requestVingadores());
-		return new ResponseEntity(zip, HttpStatus.OK);
-	}
-
-	private boolean paramsIsOk(String id){
-		return !Objects.isNull(id) && !id.trim().isEmpty();
-	}
-	
 }
