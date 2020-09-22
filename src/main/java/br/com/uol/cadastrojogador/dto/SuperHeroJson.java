@@ -2,7 +2,6 @@ package br.com.uol.cadastrojogador.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
 import java.util.List;
 import java.util.Map;
 

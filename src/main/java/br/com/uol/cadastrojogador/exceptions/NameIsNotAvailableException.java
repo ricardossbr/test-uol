@@ -9,5 +9,4 @@ public class NameIsNotAvailableException extends RuntimeException{
     public NameIsNotAvailableException(String message, Throwable causeOfError){
         super(message, causeOfError);
     }
-
 }

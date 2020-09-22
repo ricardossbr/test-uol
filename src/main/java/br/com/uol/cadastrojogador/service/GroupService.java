@@ -8,7 +8,6 @@ import br.com.uol.cadastrojogador.dto.SuperHeroXml;
 import br.com.uol.cadastrojogador.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;

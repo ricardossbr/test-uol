@@ -2,13 +2,13 @@ package br.com.uol.cadastrojogador.controller;
 
 import br.com.uol.cadastrojogador.dto.PlayerDto;
 import br.com.uol.cadastrojogador.enums.GroupNameEnum;
+import br.com.uol.cadastrojogador.model.PlayerModel;
 import br.com.uol.cadastrojogador.service.PlayerService;
 import br.com.uol.cadastrojogador.service.ResourceHttpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +26,15 @@ public class PlayerController {
 	public ResponseEntity<List<String>> availableGroups() throws IOException {
 		return ResponseEntity.status(HttpStatus.OK).body(Arrays.asList(GroupNameEnum.LIGADAJUSTICA.name(), GroupNameEnum.VINGADORES.name()));
 	}
-	
+
+	@GetMapping(value = "/player")
+	public ResponseEntity listAllPlayers() {
+		return this.playerService.getPlayers();
+	}
+
 	@GetMapping(value = "/player/{id}")
-	public @ResponseBody  ResponseEntity list(@PathVariable("id") Long id) {
-	   return this.playerService.getPlayer(id);
+	public ResponseEntity list(@PathVariable("id") Long id) {
+		return this.playerService.getPlayer(id);
 	}
 	
 	@PostMapping(value = "/player")
@@ -42,12 +47,16 @@ public class PlayerController {
 	
 	@DeleteMapping(value = "/player/{id}")
 	public ResponseEntity delete(@PathVariable Long id) {
-		return ResponseEntity.ok(HttpStatus.OK);
+		this.playerService.deletePlayer(id);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping(value = "/player/{id}")
-    public ResponseEntity edit(@PathVariable("id") Long id) throws IOException {
-		return ResponseEntity.ok(HttpStatus.OK);
-
+    public ResponseEntity edit(@RequestBody PlayerModel playerModel, @PathVariable Long id){
+		if(playerModel != null && id != null){
+			playerModel.setId(id);
+			return this.playerService.alterPlayer(playerModel);
+		}
+		return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }
