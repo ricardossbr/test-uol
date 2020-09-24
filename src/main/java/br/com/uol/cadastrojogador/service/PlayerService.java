@@ -3,6 +3,7 @@ package br.com.uol.cadastrojogador.service;
 import br.com.uol.cadastrojogador.dto.PlayerDto;
 import br.com.uol.cadastrojogador.exceptions.NameIsNotAvailableException;
 import br.com.uol.cadastrojogador.exceptions.PlayerIsNotFoundException;
+import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
 import br.com.uol.cadastrojogador.model.PlayerModel;
 import br.com.uol.cadastrojogador.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,10 @@ public class PlayerService {
     @Autowired
     private GroupService groupService;
 
-    public ResponseEntity getPlayers(){
+    public ResponseEntity<Map<String, List<PlayerModel>>> getPlayers(){
         final List<PlayerModel> players = this.repository.findAll();
-        return ResponseEntity.ok(players.stream().collect(Collectors.groupingBy(p -> p.getGroupModel().getGroupName())));
+        final Map<String, List<PlayerModel>> response = players.stream().collect(Collectors.groupingBy(p -> p.getGroupModel().getGroupName()));
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<PlayerModel> getPlayer(Long id){
@@ -35,10 +37,10 @@ public class PlayerService {
         if(player.isPresent()){
             return ResponseEntity.ok(player.get());
         }
-        throw new PlayerIsNotFoundException("Player is not found");
+        throw new PlayerIsNotFoundException();
     }
 
-    public ResponseEntity save(PlayerDto playerDto) throws IOException {
+    public ResponseEntity save(PlayerDto playerDto) throws IOException, ResourceHttpIsNotAvailableException {
         final PlayerModel playerModel = new PlayerModel();
         playerModel.setName(playerDto.getName());
         playerModel.setEmail(playerDto.getEmail());
@@ -49,7 +51,7 @@ public class PlayerService {
             return ResponseEntity.ok(this.getUri(player));
         }catch (DataIntegrityViolationException e){
             e.printStackTrace();
-            throw new NameIsNotAvailableException("name is not available");
+            throw new NameIsNotAvailableException();
         }
 
     }
@@ -58,15 +60,16 @@ public class PlayerService {
         try {
             this.repository.deleteById(id);
         }catch (EmptyResultDataAccessException e ){
-            throw new PlayerIsNotFoundException("Player is not found");
+            throw new PlayerIsNotFoundException();
         }
     }
 
     public ResponseEntity<PlayerModel> alterPlayer(PlayerModel playerModel){
         try {
-            return ResponseEntity.ok(this.repository.save(playerModel));
+            final PlayerModel player = this.repository.save(playerModel);
+            return ResponseEntity.ok(player);
         }catch (EmptyResultDataAccessException e ){
-            throw new PlayerIsNotFoundException("Player is not found");
+            throw new PlayerIsNotFoundException();
         }
     }
 

@@ -2,6 +2,7 @@ package br.com.uol.cadastrojogador.controller;
 
 import br.com.uol.cadastrojogador.dto.PlayerDto;
 import br.com.uol.cadastrojogador.enums.GroupNameEnum;
+import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
 import br.com.uol.cadastrojogador.model.PlayerModel;
 import br.com.uol.cadastrojogador.service.PlayerService;
 import br.com.uol.cadastrojogador.service.ResourceHttpService;
@@ -38,7 +39,7 @@ public class PlayerController {
 	}
 	
 	@PostMapping(value = "/player")
-	public ResponseEntity  save(@RequestBody PlayerDto playerModel) throws IOException {
+	public ResponseEntity  save(@RequestBody PlayerDto playerModel) throws IOException, ResourceHttpIsNotAvailableException {
 		if(playerModel != null){
 			return playerService.save(playerModel);
 		}

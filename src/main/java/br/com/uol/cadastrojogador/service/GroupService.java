@@ -2,6 +2,7 @@ package br.com.uol.cadastrojogador.service;
 
 import br.com.uol.cadastrojogador.enums.GroupNameEnum;
 import br.com.uol.cadastrojogador.exceptions.NameIsNotAvailableException;
+import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
 import br.com.uol.cadastrojogador.model.GroupModel;
 import br.com.uol.cadastrojogador.dto.SuperHeroJson;
 import br.com.uol.cadastrojogador.dto.SuperHeroXml;
@@ -21,7 +22,7 @@ public class GroupService {
    @Autowired
    private ResourceHttpService httpService;
 
-   public GroupModel getGroup(String groupName) throws IOException {
+   public GroupModel getGroup(String groupName) throws IOException, ResourceHttpIsNotAvailableException {
       final List<GroupModel> groupModels = this.repository.findByGroupName(groupName);
       final GroupModel groupModel = new GroupModel();
       groupModel.setGroupName(groupName);
@@ -45,6 +46,6 @@ public class GroupService {
       if(availableNames.size() > 1){
          return availableNames.get(new Random().nextInt(availableNames.size()));
       }
-      throw new NameIsNotAvailableException("name is not available");
+      throw new NameIsNotAvailableException();
    }
 }
