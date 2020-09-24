@@ -7,6 +7,6 @@ import java.time.LocalDateTime;
 public class DetailErrorHttp {
     private String error;
     private String errorTitle;
-    private String errorMessageOfDeveloper;
-    private LocalDateTime errorDate;
+    private final String errorMessageOfDeveloper = "Please verify the catalog of error, and good lucky my friend!";
+    private final LocalDateTime errorDate = LocalDateTime.now();
 }

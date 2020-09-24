@@ -2,6 +2,7 @@ package br.com.uol.cadastrojogador.service;
 
 import br.com.uol.cadastrojogador.dto.SuperHeroJson;
 import br.com.uol.cadastrojogador.dto.SuperHeroXml;
+import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +24,22 @@ public class ResourceHttpService {
 	@Value("${url.xml}")
 	private String urlXml;
 
-	public SuperHeroJson requestVingadores() throws IOException {
+	public SuperHeroJson requestVingadores() throws IOException, ResourceHttpIsNotAvailableException {
 		return this.mapper.readValue(this.requestByUrl(urlJson), SuperHeroJson.class);
 	}
 	
-	public SuperHeroXml requestLiga() throws IOException {
+	public SuperHeroXml requestLiga() throws IOException, ResourceHttpIsNotAvailableException {
 		return this.xmlMapper.readValue(requestByUrl(urlXml), SuperHeroXml.class);
 	}
 
-	private String requestByUrl(String url) {
+	private String requestByUrl(String url) throws ResourceHttpIsNotAvailableException {
 		try {
 			final StringBuilder result = new StringBuilder();
 			final URL obj = new URL(url);
 			final HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			con.setRequestMethod(RequestMethod.GET.name());
 			con.setRequestProperty("User-Agent", "");
-			final  int responseCode = con.getResponseCode();
+			final int responseCode = con.getResponseCode();
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				final InputStream in = new BufferedInputStream(con.getInputStream());
 				final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -49,8 +50,7 @@ public class ResourceHttpService {
 			}
 			return result.toString();
 		}catch (IOException e) {
-			System.err.println(e.getMessage());
-			return "";
+			throw new ResourceHttpIsNotAvailableException();
 		}
 	}
 }
