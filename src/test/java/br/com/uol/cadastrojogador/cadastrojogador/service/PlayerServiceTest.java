@@ -9,20 +9,26 @@ import br.com.uol.cadastrojogador.service.PlayerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 import static br.com.uol.cadastrojogador.cadastrojogador.builder.PlayerTestBuilder.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PlayerServiceTest {
@@ -59,15 +65,16 @@ public class PlayerServiceTest {
         assertEquals("Ricardo" , player.getBody().getName());
     }
 
-   /* @Test
+    @Test
     public void when_call_save_player_should_be_ok() throws IOException, ResourceHttpIsNotAvailableException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         when(this.repository.save(any())).thenReturn(getPlayer());
-        when(ServletUriComponentsBuilder.fromContextPath(any())).then(new URI(""));
         final ResponseEntity player = this.service.save(getPlayerDTO());
         assertNotNull(player);
         assertEquals( 200 , player.getStatusCodeValue());
-        assertEquals("http://localhost:8080/player/1" , player.getBody());
-    }*/
+        assertEquals("http://localhost/1" , player.getBody().toString());
+    }
 
     @Test
     public void when_call_alter_player_should_be_ok(){
@@ -76,6 +83,21 @@ public class PlayerServiceTest {
         assertNotNull(player);
         assertEquals( 200 , player.getStatusCodeValue());
         assertEquals("Ricardo" , player.getBody().getName());
+    }
+
+    @Test
+    public void when_call_save_player_dto_without_group_name_should_be_error() throws IOException, ResourceHttpIsNotAvailableException {
+        when(this.repository.save(any())).thenReturn(getPlayer());
+        final ResponseEntity player = this.service.save(getPlayerDTOWitoutGroupName());
+        assertNotNull(player);
+        assertEquals( 400 , player.getStatusCodeValue());
+    }
+
+    @Test
+    public void when_call_save_player_with_null_should_be_error() throws IOException, ResourceHttpIsNotAvailableException {
+        final ResponseEntity player = this.service.save(getPlayerDTONull());
+        assertNotNull(player);
+        assertEquals( 400 , player.getStatusCodeValue());
     }
 
     @Test
