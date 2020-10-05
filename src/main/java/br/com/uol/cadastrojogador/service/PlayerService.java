@@ -1,18 +1,19 @@
 package br.com.uol.cadastrojogador.service;
 
 import br.com.uol.cadastrojogador.dto.PlayerDto;
-import br.com.uol.cadastrojogador.exceptions.NameIsNotAvailableException;
-import br.com.uol.cadastrojogador.exceptions.PlayerIsNotFoundException;
-import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
+import br.com.uol.cadastrojogador.enums.TeamEnum;
+import br.com.uol.cadastrojogador.exceptions.*;
+import br.com.uol.cadastrojogador.model.GroupModel;
 import br.com.uol.cadastrojogador.model.PlayerModel;
 import br.com.uol.cadastrojogador.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import java.io.IOException;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,10 @@ public class PlayerService {
     @Autowired
     private GroupService groupService;
 
-    public ResponseEntity<Map<String, List<PlayerModel>>> getPlayers(){
-        final List<PlayerModel> players = this.repository.findAll();
-        final Map<String, List<PlayerModel>> response = players.stream().collect(Collectors.groupingBy(p -> p.getGroupModel().getGroupName()));
+    public ResponseEntity<Map<TeamEnum, List<PlayerModel>>> getPlayers(){
+        final Map<TeamEnum, List<PlayerModel>> response = this.repository.findAll()
+                .stream()
+                .collect(Collectors.groupingBy(p -> p.getGroup().getTeam()));
         return ResponseEntity.ok(response);
     }
 
@@ -40,34 +42,57 @@ public class PlayerService {
         throw new PlayerIsNotFoundException();
     }
 
-    public ResponseEntity save(PlayerDto playerDto) throws IOException, ResourceHttpIsNotAvailableException {
+    public ResponseEntity save(PlayerDto playerDto) throws TeamIsFullException{
         final PlayerModel playerModel = new PlayerModel();
-        playerModel.setName(playerDto.getName());
-        playerModel.setEmail(playerDto.getEmail());
-        playerModel.setPhoneNumber(playerDto.getPhoneNumber());
-        playerModel.setGroupModel(this.groupService.getGroup(playerDto.getGroupName().name()));
-        try{
-            final PlayerModel player = this.repository.save(playerModel);
-            return ResponseEntity.ok(this.getUri(player));
-        }catch (DataIntegrityViolationException e){
-            e.printStackTrace();
-            throw new NameIsNotAvailableException();
+        if(playerDto != null){
+            playerModel.setName(playerDto.getName());
+            playerModel.setEmail(playerDto.getEmail());
+            playerModel.setPhoneNumber(playerDto.getPhoneNumber());
+            if(playerDto.getTeam() != null){
+                playerModel.setGroup(this.groupService.getGroupBySave(playerDto.getTeam()));
+                try{
+                    final PlayerModel player = this.repository.save(playerModel);
+                    return ResponseEntity.ok(this.getUri(player));
+                }catch (DataIntegrityViolationException e){
+                    e.printStackTrace();
+                    throw new SuperHeroIsNotAvailableException();
+                }
+            }
         }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
 
+    public ResponseEntity<PlayerModel> alterPlayer(PlayerModel player) throws GroupIsRequiredExcepetion, HeroInconsistentWithTeamException {
+        final Optional<PlayerModel> playerInDataBase = this.repository.findById(player.getId());
+        if(playerInDataBase.isPresent()){
+            final PlayerModel playerFound = playerInDataBase.get();
+            playerFound.setName(player.getName());
+            playerFound.setEmail(player.getEmail());
+            playerFound.setPhoneNumber(player.getPhoneNumber());
+            if(playerFound.getGroup().equals(player.getGroup())) {
+                playerFound.setGroup(player.getGroup());
+                return ResponseEntity.ok(this.repository.save(playerFound));
+            }
+            if(player.getGroup() != null &&
+                    player.getGroup().getTeam() != null &&
+                    player.getGroup().getSuperHero() != null)
+            {
+                final GroupModel group = this.groupService.getGroupByAlter(player.getGroup());
+                if(group != null){
+                    playerFound.setGroup(group);
+                    return ResponseEntity.ok(this.repository.save(playerFound));
+                }
+                throw new HeroInconsistentWithTeamException();
+            }
+            throw new GroupIsRequiredExcepetion();
+        }else{
+            return ResponseEntity.notFound().build();    
+        }
     }
 
     public void deletePlayer(Long id){
         try {
             this.repository.deleteById(id);
-        }catch (EmptyResultDataAccessException e ){
-            throw new PlayerIsNotFoundException();
-        }
-    }
-
-    public ResponseEntity<PlayerModel> alterPlayer(PlayerModel playerModel){
-        try {
-            final PlayerModel player = this.repository.save(playerModel);
-            return ResponseEntity.ok(player);
         }catch (EmptyResultDataAccessException e ){
             throw new PlayerIsNotFoundException();
         }

@@ -24,12 +24,22 @@ public class ResourceHttpService {
 	@Value("${url.xml}")
 	private String urlXml;
 
-	public SuperHeroJson requestVingadores() throws IOException, ResourceHttpIsNotAvailableException {
-		return this.mapper.readValue(this.requestByUrl(urlJson), SuperHeroJson.class);
+	public SuperHeroJson requestVingadores(){
+		try{
+			return this.mapper.readValue(this.requestByUrl(urlJson), SuperHeroJson.class);
+		}catch (IOException | ResourceHttpIsNotAvailableException e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
-	public SuperHeroXml requestLiga() throws IOException, ResourceHttpIsNotAvailableException {
-		return this.xmlMapper.readValue(requestByUrl(urlXml), SuperHeroXml.class);
+	public SuperHeroXml requestLiga(){
+		try{
+			return this.xmlMapper.readValue(requestByUrl(urlXml), SuperHeroXml.class);
+		}catch (IOException | ResourceHttpIsNotAvailableException e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private String requestByUrl(String url) throws ResourceHttpIsNotAvailableException {
@@ -50,6 +60,7 @@ public class ResourceHttpService {
 			}
 			return result.toString();
 		}catch (IOException e) {
+			e.printStackTrace();
 			throw new ResourceHttpIsNotAvailableException();
 		}
 	}

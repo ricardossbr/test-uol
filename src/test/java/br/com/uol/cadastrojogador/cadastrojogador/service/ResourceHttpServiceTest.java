@@ -2,7 +2,6 @@ package br.com.uol.cadastrojogador.cadastrojogador.service;
 
 import br.com.uol.cadastrojogador.dto.SuperHeroJson;
 import br.com.uol.cadastrojogador.dto.SuperHeroXml;
-import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
 import br.com.uol.cadastrojogador.service.ResourceHttpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -14,9 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ResourceHttpServiceTest {
@@ -35,16 +33,30 @@ public class ResourceHttpServiceTest {
     }
 
     @Test
-    public void when_call_request_vingadores_should_be_ok() throws IOException, ResourceHttpIsNotAvailableException {
+    public void when_call_request_vingadores_should_be_ok(){
         final SuperHeroJson json = service.requestVingadores();
         assertNotNull(json);
         assertEquals(7 , json.getVingadores().size());
     }
 
     @Test
-    public void when_call_request_liga_da_justica_should_be_ok() throws IOException, ResourceHttpIsNotAvailableException {
+    public void when_call_request_liga_da_justica_should_be_ok() {
         final SuperHeroXml superHeroXml = service.requestLiga();
         assertNotNull(superHeroXml);
         assertEquals(6 , superHeroXml.getCodNames().size());
+    }
+
+    @Test
+    public void when_call_request_liga_da_justica_should_be_erro() {
+        ReflectionTestUtils.setField(service, "urlXml", "");
+        final SuperHeroXml superHeroXml = service.requestLiga();
+        assertNull(superHeroXml);
+    }
+
+    @Test
+    public void when_call_request_vingadores_should_be_erro(){
+        ReflectionTestUtils.setField(service, "urlJson", "");
+        final SuperHeroJson json = service.requestVingadores();
+        assertNull(json);
     }
 }
