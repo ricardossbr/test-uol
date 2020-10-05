@@ -1,16 +1,19 @@
 package br.com.uol.cadastrojogador.service;
 
-import br.com.uol.cadastrojogador.enums.GroupNameEnum;
-import br.com.uol.cadastrojogador.exceptions.NameIsNotAvailableException;
-import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
-import br.com.uol.cadastrojogador.model.GroupModel;
 import br.com.uol.cadastrojogador.dto.SuperHeroJson;
 import br.com.uol.cadastrojogador.dto.SuperHeroXml;
+import br.com.uol.cadastrojogador.enums.TeamEnum;
+import br.com.uol.cadastrojogador.exceptions.HeroInconsistentWithTeamException;
+import br.com.uol.cadastrojogador.exceptions.SuperHeroIsNotAvailableException;
+import br.com.uol.cadastrojogador.exceptions.TeamIsFullException;
+import br.com.uol.cadastrojogador.model.GroupModel;
 import br.com.uol.cadastrojogador.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.io.IOException;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,30 +25,60 @@ public class GroupService {
    @Autowired
    private ResourceHttpService httpService;
 
-   public GroupModel getGroup(String groupName) throws IOException, ResourceHttpIsNotAvailableException {
-      final List<GroupModel> groupModels = this.repository.findByGroupName(groupName);
+   public GroupModel getGroupBySave(TeamEnum team) throws TeamIsFullException {
+      final List<GroupModel> groupModels = this.repository.findByTeam(team);
       final GroupModel groupModel = new GroupModel();
-      groupModel.setGroupName(groupName);
-      if(groupName.equals(GroupNameEnum.VINGADORES.name())){
+      groupModel.setTeam(team);
+      if(team.equals(TeamEnum.THE_AVENGERS)){
          final SuperHeroJson heroJson = this.httpService.requestVingadores();
          final List<String> codNames = heroJson.getVingadores().stream()
                  .map(r -> r.get("codinome")).collect(Collectors.toList());
-         groupModel.setName(this.getAvailableNames(groupModels, codNames));
+         groupModel.setSuperHero(this.getHeroAvailableBySave(groupModels, codNames));
       }else{
          final SuperHeroXml heroXml = this.httpService.requestLiga();
-         groupModel.setName(this.getAvailableNames(groupModels, heroXml.getCodNames()));
+         groupModel.setSuperHero(this.getHeroAvailableBySave(groupModels, heroXml.getCodNames()));
       }
       return groupModel;
    }
 
-   private String getAvailableNames(List<GroupModel> groupModels, List<String> codNames) {
+   private String getHeroAvailableBySave(List<GroupModel> groupModels, List<String> codNames) throws TeamIsFullException {
       final List<String> availableNames = new ArrayList<>(codNames);
       if(groupModels.size() > 1){
-         groupModels.stream().forEach(to -> availableNames.removeIf(r -> r.equals(to.getName())));
+         groupModels.stream().forEach(to -> availableNames.removeIf(r -> r.equals(to.getSuperHero())));
       }
       if(availableNames.size() > 1){
          return availableNames.get(new Random().nextInt(availableNames.size()));
       }
-      throw new NameIsNotAvailableException();
+      throw new TeamIsFullException();
+   }
+
+   public GroupModel getGroupByAlter(GroupModel group) {
+      final boolean isAvailable = !this.repository.existsBySuperHero(group.getSuperHero());
+      if(isAvailable){
+         final GroupModel groupModel = new GroupModel();
+         groupModel.setTeam(group.getTeam());
+         if(group.getTeam().equals(TeamEnum.THE_AVENGERS)){
+            final SuperHeroJson heroJson = this.httpService.requestVingadores();
+            final List<String> codNames = heroJson.getVingadores().stream()
+                    .map(r -> r.get("codinome"))
+                    .collect(Collectors.toList());
+            groupModel.setSuperHero(this.getHeroAlter(codNames, group.getSuperHero()));
+         }else{
+            final SuperHeroXml heroXml = this.httpService.requestLiga();
+            groupModel.setSuperHero(this.getHeroAlter(heroXml.getCodNames(), group.getSuperHero()));
+
+         }
+         return groupModel.getSuperHero() != null ? groupModel : null;
+      }
+      throw new SuperHeroIsNotAvailableException();
+   }
+
+   private String getHeroAlter(List<String> codNames, String heroVerify) {
+      final List<String> heros = codNames.stream()
+              .filter(r -> r.equals(heroVerify)).collect(Collectors.toList());
+      if (heros.size() == 1) {
+         return heros.get(0);
+      }
+      return null;
    }
 }

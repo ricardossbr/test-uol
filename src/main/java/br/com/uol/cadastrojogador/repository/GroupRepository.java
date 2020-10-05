@@ -1,11 +1,14 @@
 package br.com.uol.cadastrojogador.repository;
 
+import br.com.uol.cadastrojogador.enums.TeamEnum;
+import br.com.uol.cadastrojogador.model.GroupModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import br.com.uol.cadastrojogador.model.GroupModel;
+
 import java.util.List;
 
 @Repository
 public interface GroupRepository extends JpaRepository<GroupModel, Long> {
-    List<GroupModel> findByGroupName(String groupName);
+    List<GroupModel> findByTeam(TeamEnum team);
+    boolean existsBySuperHero(String superHero);
 }
