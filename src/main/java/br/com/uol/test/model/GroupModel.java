@@ -1,6 +1,6 @@
-package br.com.uol.cadastrojogador.model;
+package br.com.uol.test.model;
 
-import br.com.uol.cadastrojogador.enums.TeamEnum;
+import br.com.uol.test.enums.TeamEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

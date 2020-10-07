@@ -1,11 +1,10 @@
-package br.com.uol.cadastrojogador.cadastrojogador.service;
+package br.com.uol.test.service;
 
-import br.com.uol.cadastrojogador.enums.TeamEnum;
-import br.com.uol.cadastrojogador.exceptions.*;
-import br.com.uol.cadastrojogador.model.PlayerModel;
-import br.com.uol.cadastrojogador.repository.PlayerRepository;
-import br.com.uol.cadastrojogador.service.GroupService;
-import br.com.uol.cadastrojogador.service.PlayerService;
+import br.com.uol.test.builder.PlayerTestBuilder;
+import br.com.uol.test.enums.TeamEnum;
+import br.com.uol.test.exceptions.*;
+import br.com.uol.test.model.PlayerModel;
+import br.com.uol.test.repository.PlayerRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static br.com.uol.cadastrojogador.cadastrojogador.builder.PlayerTestBuilder.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +45,7 @@ public class PlayerServiceTest {
 
     @Test
     public void when_call_get_players_should_be_ok(){
-        when(this.repository.findAll()).thenReturn(getList());
+        when(this.repository.findAll()).thenReturn(PlayerTestBuilder.getList());
         final ResponseEntity<Map<TeamEnum, List<PlayerModel>>> players = this.service.getPlayers();
         final Map<TeamEnum, List<PlayerModel>> response = players.getBody();
         assertNotNull(players);
@@ -57,7 +55,7 @@ public class PlayerServiceTest {
 
     @Test
     public void when_call_get_player_should_be_ok(){
-        when(this.repository.findById(anyLong())).thenReturn(getOptionalPlayer());
+        when(this.repository.findById(anyLong())).thenReturn(PlayerTestBuilder.getOptionalPlayer());
         final ResponseEntity<PlayerModel> player = this.service.getPlayer(anyLong());
         assertNotNull(player);
         assertEquals( 200 , player.getStatusCodeValue());
@@ -68,8 +66,8 @@ public class PlayerServiceTest {
     public void when_call_save_player_should_be_ok() throws IOException, ResourceHttpIsNotAvailableException, TeamIsFullException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(this.repository.save(any())).thenReturn(getPlayer());
-        final ResponseEntity player = this.service.save(getPlayerDTO());
+        when(this.repository.save(any())).thenReturn(PlayerTestBuilder.getPlayer());
+        final ResponseEntity player = this.service.save(PlayerTestBuilder.getPlayerDTO());
         assertNotNull(player);
         assertEquals( 200 , player.getStatusCodeValue());
         assertEquals("http://localhost/1" , player.getBody().toString());
@@ -77,10 +75,10 @@ public class PlayerServiceTest {
 
     @Test
     public void when_call_alter_player_should_be_ok() throws GroupIsRequiredExcepetion, HeroInconsistentWithTeamException {
-        when(this.repository.findById(any())).thenReturn(getOptionalPlayer());
-        when(this.groupService.getGroupByAlter(any())).thenReturn(getGroupModel());
-        when(this.repository.save(any())).thenReturn(getPlayer());
-        final ResponseEntity<PlayerModel> player = this.service.alterPlayer(getPlayer());
+        when(this.repository.findById(any())).thenReturn(PlayerTestBuilder.getOptionalPlayer());
+        when(this.groupService.getGroupByAlter(any())).thenReturn(PlayerTestBuilder.getGroupModel());
+        when(this.repository.save(any())).thenReturn(PlayerTestBuilder.getPlayer());
+        final ResponseEntity<PlayerModel> player = this.service.alterPlayer(PlayerTestBuilder.getPlayer());
         assertNotNull(player);
         assertEquals( 200 , player.getStatusCodeValue());
         assertEquals("Ricardo" , player.getBody().getName());
@@ -88,31 +86,31 @@ public class PlayerServiceTest {
 
     @Test
     public void when_call_save_player_dto_without_group_name_should_be_error() throws IOException, ResourceHttpIsNotAvailableException, TeamIsFullException {
-        final ResponseEntity player = this.service.save(getPlayerDTOWitoutGroupName());
+        final ResponseEntity player = this.service.save(PlayerTestBuilder.getPlayerDTOWitoutGroupName());
         assertNotNull(player);
         assertEquals( 400 , player.getStatusCodeValue());
     }
 
     @Test
     public void when_call_save_player_with_null_should_be_error() throws TeamIsFullException {
-        final ResponseEntity player = this.service.save(getPlayerDTONull());
+        final ResponseEntity player = this.service.save(PlayerTestBuilder.getPlayerDTONull());
         assertNotNull(player);
         assertEquals( 400 , player.getStatusCodeValue());
     }
 
     @Test
     public void when_call_alter_player_empty_should_be_not_found() throws GroupIsRequiredExcepetion, HeroInconsistentWithTeamException {
-        when(this.repository.findById(any())).thenReturn(getOptionalPlayerEmpty());
-        final ResponseEntity<PlayerModel> player = this.service.alterPlayer(getPlayerEmpty());
+        when(this.repository.findById(any())).thenReturn(PlayerTestBuilder.getOptionalPlayerEmpty());
+        final ResponseEntity<PlayerModel> player = this.service.alterPlayer(PlayerTestBuilder.getPlayerEmpty());
         assertNotNull(player );
         assertEquals(404, player.getStatusCodeValue());
     }
 
     @Test
     public void when_call_alter_player_empty_should_be_error_group_is_required() throws HeroInconsistentWithTeamException {
-        when(this.repository.findById(any())).thenReturn(getOptionalPlayer());
+        when(this.repository.findById(any())).thenReturn(PlayerTestBuilder.getOptionalPlayer());
         try{
-            this.service.alterPlayer(getPlayerWithoutGroup());
+            this.service.alterPlayer(PlayerTestBuilder.getPlayerWithoutGroup());
         }catch (GroupIsRequiredExcepetion e){
             assertEquals("Group is required" , e.getMessage());
         }
@@ -120,9 +118,9 @@ public class PlayerServiceTest {
 
     @Test
     public void when_call_alter_player_empty_should_be_error_hero_inconsistent() throws GroupIsRequiredExcepetion {
-        when(this.repository.findById(any())).thenReturn(getOptionalPlayer());
+        when(this.repository.findById(any())).thenReturn(PlayerTestBuilder.getOptionalPlayer());
         try{
-            this.service.alterPlayer(getPlayerInconsistentGroup());
+            this.service.alterPlayer(PlayerTestBuilder.getPlayerInconsistentGroup());
         }catch (HeroInconsistentWithTeamException e){
             assertEquals("Superhero is not available for this team" , e.getMessage());
         }
@@ -130,7 +128,7 @@ public class PlayerServiceTest {
 
     @Test
     public void when_call_get_player_should_be_error(){
-        when(this.repository.findById(anyLong())).thenReturn(getOptionalPlayerEmpty());
+        when(this.repository.findById(anyLong())).thenReturn(PlayerTestBuilder.getOptionalPlayerEmpty());
         try{
             this.service.getPlayer(anyLong());
         }catch (PlayerIsNotFoundException e){

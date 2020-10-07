@@ -1,11 +1,11 @@
-package br.com.uol.cadastrojogador.service;
+package br.com.uol.test.service;
 
-import br.com.uol.cadastrojogador.dto.PlayerDto;
-import br.com.uol.cadastrojogador.enums.TeamEnum;
-import br.com.uol.cadastrojogador.exceptions.*;
-import br.com.uol.cadastrojogador.model.GroupModel;
-import br.com.uol.cadastrojogador.model.PlayerModel;
-import br.com.uol.cadastrojogador.repository.PlayerRepository;
+import br.com.uol.test.dto.PlayerDto;
+import br.com.uol.test.enums.TeamEnum;
+import br.com.uol.test.exceptions.*;
+import br.com.uol.test.model.GroupModel;
+import br.com.uol.test.model.PlayerModel;
+import br.com.uol.test.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;

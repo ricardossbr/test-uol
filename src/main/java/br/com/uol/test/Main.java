@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador;
+package br.com.uol.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
