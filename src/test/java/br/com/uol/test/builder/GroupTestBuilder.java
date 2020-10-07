@@ -1,9 +1,9 @@
-package br.com.uol.cadastrojogador.cadastrojogador.builder;
+package br.com.uol.test.builder;
 
-import br.com.uol.cadastrojogador.dto.SuperHeroJson;
-import br.com.uol.cadastrojogador.dto.SuperHeroXml;
-import br.com.uol.cadastrojogador.enums.TeamEnum;
-import br.com.uol.cadastrojogador.model.GroupModel;
+import br.com.uol.test.dto.SuperHeroJson;
+import br.com.uol.test.dto.SuperHeroXml;
+import br.com.uol.test.enums.TeamEnum;
+import br.com.uol.test.model.GroupModel;
 
 import java.util.Arrays;
 import java.util.List;

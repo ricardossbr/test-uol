@@ -1,9 +1,9 @@
-package br.com.uol.cadastrojogador.cadastrojogador.builder;
+package br.com.uol.test.builder;
 
-import br.com.uol.cadastrojogador.dto.PlayerDto;
-import br.com.uol.cadastrojogador.enums.TeamEnum;
-import br.com.uol.cadastrojogador.model.GroupModel;
-import br.com.uol.cadastrojogador.model.PlayerModel;
+import br.com.uol.test.dto.PlayerDto;
+import br.com.uol.test.enums.TeamEnum;
+import br.com.uol.test.model.GroupModel;
+import br.com.uol.test.model.PlayerModel;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

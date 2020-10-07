@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador.exceptions;
+package br.com.uol.test.exceptions;
 
 public class HeroInconsistentWithTeamException extends Throwable {
     public HeroInconsistentWithTeamException(){

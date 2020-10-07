@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador.dto;
+package br.com.uol.test.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

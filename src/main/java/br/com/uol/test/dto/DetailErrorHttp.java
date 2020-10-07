@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador.dto;
+package br.com.uol.test.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
