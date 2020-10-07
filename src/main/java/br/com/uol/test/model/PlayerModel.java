@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador.model;
+package br.com.uol.test.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

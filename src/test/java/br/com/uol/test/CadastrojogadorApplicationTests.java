@@ -1,4 +1,4 @@
-package br.com.uol.cadastrojogador.cadastrojogador;
+package br.com.uol.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

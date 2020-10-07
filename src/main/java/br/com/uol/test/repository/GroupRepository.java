@@ -1,7 +1,7 @@
-package br.com.uol.cadastrojogador.repository;
+package br.com.uol.test.repository;
 
-import br.com.uol.cadastrojogador.enums.TeamEnum;
-import br.com.uol.cadastrojogador.model.GroupModel;
+import br.com.uol.test.enums.TeamEnum;
+import br.com.uol.test.model.GroupModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

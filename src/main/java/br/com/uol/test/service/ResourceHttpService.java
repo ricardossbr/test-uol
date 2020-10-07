@@ -1,8 +1,8 @@
-package br.com.uol.cadastrojogador.service;
+package br.com.uol.test.service;
 
-import br.com.uol.cadastrojogador.dto.SuperHeroJson;
-import br.com.uol.cadastrojogador.dto.SuperHeroXml;
-import br.com.uol.cadastrojogador.exceptions.ResourceHttpIsNotAvailableException;
+import br.com.uol.test.dto.SuperHeroJson;
+import br.com.uol.test.dto.SuperHeroXml;
+import br.com.uol.test.exceptions.ResourceHttpIsNotAvailableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;

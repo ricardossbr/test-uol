@@ -1,13 +1,12 @@
-package br.com.uol.cadastrojogador.service;
+package br.com.uol.test.service;
 
-import br.com.uol.cadastrojogador.dto.SuperHeroJson;
-import br.com.uol.cadastrojogador.dto.SuperHeroXml;
-import br.com.uol.cadastrojogador.enums.TeamEnum;
-import br.com.uol.cadastrojogador.exceptions.HeroInconsistentWithTeamException;
-import br.com.uol.cadastrojogador.exceptions.SuperHeroIsNotAvailableException;
-import br.com.uol.cadastrojogador.exceptions.TeamIsFullException;
-import br.com.uol.cadastrojogador.model.GroupModel;
-import br.com.uol.cadastrojogador.repository.GroupRepository;
+import br.com.uol.test.dto.SuperHeroJson;
+import br.com.uol.test.dto.SuperHeroXml;
+import br.com.uol.test.enums.TeamEnum;
+import br.com.uol.test.exceptions.SuperHeroIsNotAvailableException;
+import br.com.uol.test.exceptions.TeamIsFullException;
+import br.com.uol.test.model.GroupModel;
+import br.com.uol.test.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
