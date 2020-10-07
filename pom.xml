@@ -3,11 +3,10 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>br.com.uol.cadastrojogador</groupId>
-	<artifactId>cadastrojogador</artifactId>
+	<groupId>br.com.uol.test</groupId>
+	<artifactId>test-uol</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>cadastrojogador</name>
-	<description>Demo project for Spring Boot</description>
+	<name>test-uol</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -80,6 +79,17 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
