@@ -2,7 +2,6 @@ package br.com.uol.test.service;
 
 import br.com.uol.test.dto.SuperHeroJson;
 import br.com.uol.test.dto.SuperHeroXml;
-import br.com.uol.test.service.ResourceHttpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.Before;
@@ -34,14 +33,14 @@ public class ResourceHttpServiceTest {
 
     @Test
     public void when_call_request_vingadores_should_be_ok(){
-        final SuperHeroJson json = service.requestVingadores();
+        final SuperHeroJson json = service.requestTheAvengers();
         assertNotNull(json);
         assertEquals(7 , json.getVingadores().size());
     }
 
     @Test
     public void when_call_request_liga_da_justica_should_be_ok() {
-        final SuperHeroXml superHeroXml = service.requestLiga();
+        final SuperHeroXml superHeroXml = service.requestJusticeLeague();
         assertNotNull(superHeroXml);
         assertEquals(6 , superHeroXml.getCodNames().size());
     }
@@ -49,14 +48,14 @@ public class ResourceHttpServiceTest {
     @Test
     public void when_call_request_liga_da_justica_should_be_erro() {
         ReflectionTestUtils.setField(service, "urlXml", "");
-        final SuperHeroXml superHeroXml = service.requestLiga();
+        final SuperHeroXml superHeroXml = service.requestJusticeLeague();
         assertNull(superHeroXml);
     }
 
     @Test
     public void when_call_request_vingadores_should_be_erro(){
         ReflectionTestUtils.setField(service, "urlJson", "");
-        final SuperHeroJson json = service.requestVingadores();
+        final SuperHeroJson json = service.requestTheAvengers();
         assertNull(json);
     }
 }

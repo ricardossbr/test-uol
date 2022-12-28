@@ -37,7 +37,7 @@ public class GroupServiceTest {
     @Test
     public void when_call_get_group_by_save_with_the_avengers_should_be_ok() throws TeamIsFullException {
         when(this.repository.findByTeam(any())).thenReturn(GroupTestBuilder.getListEmpty());
-        when(this.httpService.requestVingadores()).thenReturn(GroupTestBuilder.getSuperHeroJson());
+        when(this.httpService.requestTheAvengers()).thenReturn(GroupTestBuilder.getSuperHeroJson());
         final GroupModel group = this.groupService.getGroupBySave(TeamEnum.THE_AVENGERS);
         assertEquals("THE_AVENGERS", group.getTeam().name());
         assertNotEquals("", group.getSuperHero());
@@ -46,7 +46,7 @@ public class GroupServiceTest {
     @Test
     public void when_call_get_group_by_save_with_justice_league_should_be_ok() throws TeamIsFullException {
         when(this.repository.findByTeam(any())).thenReturn(GroupTestBuilder.getListEmpty());
-        when(this.httpService.requestLiga()).thenReturn(GroupTestBuilder.getHeroXml());
+        when(this.httpService.requestJusticeLeague()).thenReturn(GroupTestBuilder.getHeroXml());
         final GroupModel gpm = this.groupService.getGroupBySave(TeamEnum.JUSTICE_LEAGUE);
         assertEquals("JUSTICE_LEAGUE", gpm.getTeam().name());
         assertNotEquals("", gpm.getSuperHero());
@@ -55,7 +55,7 @@ public class GroupServiceTest {
     @Test
     public void when_call_get_group_by_alter_with_justice_league_should_be_ok() throws HeroInconsistentWithTeamException {
         when(this.repository.existsBySuperHero(any())).thenReturn(false);
-        when(this.httpService.requestLiga()).thenReturn(GroupTestBuilder.getHeroXml());
+        when(this.httpService.requestJusticeLeague()).thenReturn(GroupTestBuilder.getHeroXml());
         final GroupModel gpm = this.groupService.getGroupByAlter(GroupTestBuilder.getGroupModelXml());
         assertEquals("JUSTICE_LEAGUE", gpm.getTeam().name());
         assertNotEquals("", gpm.getSuperHero());
@@ -64,7 +64,7 @@ public class GroupServiceTest {
     @Test
     public void when_call_get_group_by_alter_with_the_avengers_should_be_ok() throws HeroInconsistentWithTeamException {
         when(this.repository.existsBySuperHero(any())).thenReturn(false);
-        when(this.httpService.requestVingadores()).thenReturn(GroupTestBuilder.getSuperHeroJson());
+        when(this.httpService.requestTheAvengers()).thenReturn(GroupTestBuilder.getSuperHeroJson());
         final GroupModel gpm = this.groupService.getGroupByAlter(GroupTestBuilder.getGroupModelJson());
         assertEquals("THE_AVENGERS", gpm.getTeam().name());
         assertNotEquals("", gpm.getSuperHero());
@@ -73,7 +73,7 @@ public class GroupServiceTest {
     @Test
     public void when_call_get_group_by_save_should_be_erro_superhero_not_available(){
         when(this.repository.findByTeam(any())).thenReturn(GroupTestBuilder.getList());
-        when(this.httpService.requestLiga()).thenReturn(GroupTestBuilder.getHeroXml());
+        when(this.httpService.requestJusticeLeague()).thenReturn(GroupTestBuilder.getHeroXml());
         try{
             final GroupModel gpm = this.groupService.getGroupBySave(TeamEnum.JUSTICE_LEAGUE);
         }catch (TeamIsFullException e){
@@ -84,7 +84,7 @@ public class GroupServiceTest {
     @Test
     public void when_call_get_group_should_be_erro_team_is_full(){
         when(this.repository.findByTeam(any())).thenReturn(GroupTestBuilder.getList());
-        when(this.httpService.requestLiga()).thenReturn(GroupTestBuilder.getHeroXml());
+        when(this.httpService.requestJusticeLeague()).thenReturn(GroupTestBuilder.getHeroXml());
         try{
             final GroupModel gpm = this.groupService.getGroupBySave(TeamEnum.JUSTICE_LEAGUE);
         }catch (TeamIsFullException e){

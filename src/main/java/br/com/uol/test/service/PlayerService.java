@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +27,19 @@ public class PlayerService {
     private PlayerRepository repository;
     @Autowired
     private GroupService groupService;
+
+    public ResponseEntity<Map<String, List<String>>> availableHeroes(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        Map.of(
+                                TeamEnum.JUSTICE_LEAGUE.name(),
+                                this.groupService.getLeague(),
+                                TeamEnum.THE_AVENGERS   .name(),
+                                this.groupService.getAvailableAvengers()
+                        )
+                );
+    }
 
     public ResponseEntity<Map<TeamEnum, List<PlayerModel>>> getPlayers(){
         final Map<TeamEnum, List<PlayerModel>> response = this.repository.findAll()
@@ -79,8 +93,11 @@ public class PlayerService {
             {
                 final GroupModel group = this.groupService.getGroupByAlter(player.getGroup());
                 if(group != null){
+                    final GroupModel oldGroup = playerFound.getGroup();
                     playerFound.setGroup(group);
-                    return ResponseEntity.ok(this.repository.save(playerFound));
+                    final PlayerModel playerSaved = this.repository.save(playerFound);
+                    this.groupService.deleteByGroup(oldGroup);
+                    return ResponseEntity.ok(playerSaved);
                 }
                 throw new HeroInconsistentWithTeamException();
             }

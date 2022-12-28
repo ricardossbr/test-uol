@@ -24,7 +24,7 @@ public class ResourceHttpService {
 	@Value("${url.xml}")
 	private String urlXml;
 
-	public SuperHeroJson requestVingadores(){
+	public SuperHeroJson requestTheAvengers(){
 		try{
 			return this.mapper.readValue(this.requestByUrl(urlJson), SuperHeroJson.class);
 		}catch (IOException | ResourceHttpIsNotAvailableException e){
@@ -33,7 +33,7 @@ public class ResourceHttpService {
 		}
 	}
 	
-	public SuperHeroXml requestLiga(){
+	public SuperHeroXml requestJusticeLeague(){
 		try{
 			return this.xmlMapper.readValue(requestByUrl(urlXml), SuperHeroXml.class);
 		}catch (IOException | ResourceHttpIsNotAvailableException e){

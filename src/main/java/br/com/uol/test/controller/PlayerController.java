@@ -25,17 +25,17 @@ public class PlayerController {
 	@Autowired
 	private PlayerService playerService;
 
-	@GetMapping(value = "/teams", produces="application/json", consumes="application/json")
-	public ResponseEntity<List<String>> availableTeams() {
-		return ResponseEntity.status(HttpStatus.OK).body(Arrays.asList(TeamEnum.JUSTICE_LEAGUE.name(), TeamEnum.THE_AVENGERS.name()));
+	@GetMapping(value = "/availableHeroes", produces="application/json")
+	public ResponseEntity availableHeroes() {
+		return this.playerService.availableHeroes();
 	}
 
-	@GetMapping(value = "/player", produces="application/json", consumes="application/json")
+	@GetMapping(value = "/player", produces="application/json")
 	public ResponseEntity listAllPlayers() {
 		return this.playerService.getPlayers();
 	}
 
-	@GetMapping(value = "/player/{id}", produces="application/json", consumes="application/json")
+	@GetMapping(value = "/player/{id}", produces="application/json")
 	public ResponseEntity list(@PathVariable("id") Long id) {
 		return this.playerService.getPlayer(id);
 	}
@@ -45,7 +45,7 @@ public class PlayerController {
 		return playerService.save(PlayerDto);
 	}
 	
-	@DeleteMapping(value = "/player/{id}", produces="application/json", consumes="application/json")
+	@DeleteMapping(value = "/player/{id}", produces="application/json")
 	public ResponseEntity delete(@PathVariable Long id) {
 		this.playerService.deletePlayer(id);
 		return ResponseEntity.noContent().build();

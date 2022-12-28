@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class GroupService {
@@ -24,19 +25,30 @@ public class GroupService {
    @Autowired
    private ResourceHttpService httpService;
 
+   public List<String> getAvailableAvengers(){
+      return this.getHeroAvengers()
+              .filter(r -> !this.repository.existsBySuperHero(r))
+              .collect(Collectors.toList());
+   }
+
+   public List<String> getLeague(){
+      return this.getHeroJusticeLeague()
+              .filter(r -> !this.repository.existsBySuperHero(r))
+              .collect(Collectors.toList());
+   }
+
+
    public GroupModel getGroupBySave(TeamEnum team) throws TeamIsFullException {
       final List<GroupModel> groupModels = this.repository.findByTeam(team);
       final GroupModel groupModel = new GroupModel();
       groupModel.setTeam(team);
-      if(team.equals(TeamEnum.THE_AVENGERS)){
-         final SuperHeroJson heroJson = this.httpService.requestVingadores();
-         final List<String> codNames = heroJson.getVingadores().stream()
-                 .map(r -> r.get("codinome")).collect(Collectors.toList());
-         groupModel.setSuperHero(this.getHeroAvailableBySave(groupModels, codNames));
-      }else{
-         final SuperHeroXml heroXml = this.httpService.requestLiga();
-         groupModel.setSuperHero(this.getHeroAvailableBySave(groupModels, heroXml.getCodNames()));
-      }
+      groupModel.setSuperHero(
+              this.getHeroAvailableBySave(groupModels,
+                      team.equals(TeamEnum.THE_AVENGERS)
+                              ? getHeroAvengers().collect(Collectors.toList())
+                              :getHeroJusticeLeague().collect(Collectors.toList())
+              )
+      );
       return groupModel;
    }
 
@@ -45,7 +57,7 @@ public class GroupService {
       if(groupModels.size() > 1){
          groupModels.stream().forEach(to -> availableNames.removeIf(r -> r.equals(to.getSuperHero())));
       }
-      if(availableNames.size() > 1){
+      if(!availableNames.isEmpty()){
          return availableNames.get(new Random().nextInt(availableNames.size()));
       }
       throw new TeamIsFullException();
@@ -56,28 +68,51 @@ public class GroupService {
       if(isAvailable){
          final GroupModel groupModel = new GroupModel();
          groupModel.setTeam(group.getTeam());
-         if(group.getTeam().equals(TeamEnum.THE_AVENGERS)){
-            final SuperHeroJson heroJson = this.httpService.requestVingadores();
-            final List<String> codNames = heroJson.getVingadores().stream()
-                    .map(r -> r.get("codinome"))
-                    .collect(Collectors.toList());
-            groupModel.setSuperHero(this.getHeroAlter(codNames, group.getSuperHero()));
-         }else{
-            final SuperHeroXml heroXml = this.httpService.requestLiga();
-            groupModel.setSuperHero(this.getHeroAlter(heroXml.getCodNames(), group.getSuperHero()));
-
-         }
+         groupModel.setSuperHero(
+                 group.getTeam().equals(TeamEnum.THE_AVENGERS)
+                 ? this.getHeroJsonAlter(group.getSuperHero())
+                 : this.getHeroXmlAlter(group.getSuperHero())
+         );
          return groupModel.getSuperHero() != null ? groupModel : null;
       }
       throw new SuperHeroIsNotAvailableException();
    }
 
-   private String getHeroAlter(List<String> codNames, String heroVerify) {
-      final List<String> heros = codNames.stream()
-              .filter(r -> r.equals(heroVerify)).collect(Collectors.toList());
-      if (heros.size() == 1) {
-         return heros.get(0);
+   public void deleteByGroup(GroupModel group){
+      this.repository.delete(group);
+   }
+
+   private String getHeroXmlAlter(String heroVerify) {
+      final List<String> heroes = getHeroJusticeLeague()
+              .filter(r -> r.equals(heroVerify))
+              .collect(Collectors.toList());
+      if (!heroes.isEmpty()) {
+         return heroes.get(0);
       }
       return null;
+   }
+
+   private String getHeroJsonAlter(String heroVerify) {
+      final List<String> heroes = getHeroAvengers()
+              .filter(r -> r.equals(heroVerify))
+              .collect(Collectors.toList());
+      if (!heroes.isEmpty()) {
+         return heroes.get(0);
+      }
+      return null;
+   }
+
+   private Stream<String> getHeroJusticeLeague() {
+      return this.httpService.requestJusticeLeague()
+              .getCodNames()
+              .stream()
+              .parallel();
+   }
+
+   private Stream<String> getHeroAvengers() {
+      return this.httpService.requestTheAvengers().getVingadores()
+              .stream()
+              .parallel()
+              .map(r -> r.get("codinome"));
    }
 }
